@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, SuspenseList, useState } from "react";
+import { createResource } from "./resources";
+import "./App.css";
+import {User, Number} from "./components";
+
 
 function App() {
+  const initialResource = createResource();
+  const [resource, setResource] = useState(initialResource);
+
+  const refresh = () => {
+    setResource(createResource());
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App-header">
+
+      <button onClick={refresh}>Refresh</button>
+
+      <br />
+
+      <SuspenseList revealOrder="together">
+        <Suspense fallback={<p>loading user...</p>}>
+          <User resource={resource} />
+        </Suspense>
+
+        <br />
+
+        <Suspense fallback={<p>loading number...</p>}>
+          <Number resource={resource} />
+        </Suspense>
+      </SuspenseList>
     </div>
   );
 }
